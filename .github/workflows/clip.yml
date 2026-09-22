@@ -4,15 +4,28 @@ on:
   workflow_dispatch:
     inputs:
       video_url:
-        description: 'Enlace del vídeo de YouTube o Twitch'
+        description: 'Enlace del vídeo de YouTube'
         required: true
         default: ''
 
 jobs:
-  build:
+  clip:
     runs-on: ubuntu-latest
     steps:
-      - name: Info
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
         run: |
-          echo "Recibido el enlace: ${{ github.event.inputs.video_url }}"
-          echo "GitHub Actions está listo, pero necesitamos configurar el script de recorte interno."
+          python -m pip install --upgrade pip
+          pip install yt-dlp opencv-python
+
+      - name: Download and process video info
+        run: |
+          echo "Descargando información del vídeo: ${{ github.event.inputs.video_url }}"
+          python -c "import yt_dlp; print(' yt-dlp listo para extraer el contenido.')"
